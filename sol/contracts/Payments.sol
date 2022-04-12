@@ -4,16 +4,17 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
 contract payments {
-    uint carrentBalance;
 
     function receivFunds() external payable {
-        carrentBalance = carrentBalance + msg.value;
     }
+
     function getBalance() public view returns(uint) {
-        return carrentBalance;
+        return address(this).balance;
     }
+
     function withdrawFunds(address payable _to) external {
-        _to.transfer(carrentBalance);
-        carrentBalance = 0;
+        require(address(this).balance > 0 ether, "Error");
+        _to.transfer(address(this).balance);
     }
+    
 }
