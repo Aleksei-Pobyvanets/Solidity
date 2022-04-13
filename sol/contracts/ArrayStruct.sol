@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
+
 contract ArrayStruct {
 
     enum Statuses {Unpayed, Payed, Shipped}
@@ -11,6 +12,7 @@ contract ArrayStruct {
     }
 
     uint public takenEth;
+    address owner = msg.sender;
 
     Payment[] public payments;
 
@@ -27,7 +29,12 @@ contract ArrayStruct {
         payments.push(payment);
     }
 
-    function withdrawAll(address payable _to) public { // вывод с проверкой полная ли стоемость оплачена
+    modifier onlyOwner(){
+        require(owner == msg.sender, "Not an owner");
+        _;
+    }
+
+    function withdrawAll(address payable _to) public onlyOwner { // вывод с проверкой полная ли стоемость оплачена
         uint total;
         for(uint i = 0; i < payments.length; i++){
             total += payments[i].amount;
@@ -35,6 +42,7 @@ contract ArrayStruct {
         require(total >= 5 ether, "Pay More Stupid");
             _to.transfer(total);
             status = Statuses.Payed;
+            takenEth = 0;
     }
 
     function getBalance() public view returns(uint){ //Проверка баланса
