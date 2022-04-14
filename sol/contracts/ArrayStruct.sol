@@ -45,6 +45,13 @@ contract ArrayStruct {
             takenEth = 0;
     }
 
+    // function withDrawAllEth() public onlyOwner() {
+    //     address payable _to = payable(owner);
+    //     address _thisAcc = address(this);
+    //     require(_thisAcc.balance > 0, "Empty Contract");
+    //     _to.transfer(_thisAcc.balance);
+    // }   вывод доступен только овнеру
+
     function getBalance() public view returns(uint){ //Проверка баланса
         return address(this).balance;
     }
