@@ -12,13 +12,17 @@ contract Tree {
     ];
 
     function encode(string memory input) public pure returns(bytes memory){
-        return abi.encodePacked();
+        return abi.encodePacked(input);
     }
 
     function makeHash(string memory input) public pure returns(bytes32){
-        keccak256(
-            
-        )
+       return  keccak256(encode(input));
     }
     
+
+    constructor() {
+        for(uint i = 0; i < transactions.length; i ++){
+            hashes.push(makeHash(transactions[i]));
+        }
+    }
 }
