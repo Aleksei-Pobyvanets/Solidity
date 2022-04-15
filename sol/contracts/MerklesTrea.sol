@@ -24,5 +24,17 @@ contract Tree {
         for(uint i = 0; i < transactions.length; i ++){
             hashes.push(makeHash(transactions[i]));
         }
+
+        uint count = transactions.length;
+        uint offset = 0;
+        while(count > 0){
+            for(uint i = 0; i < count; i += 2){
+                hashes.push(
+                    keccak256(abi.encodePacked(hashes[offset + i], hashes[offset + i + 1])
+                ));
+            }
+            offset += count;
+            count = count / 2;
+        }
     }
 }
