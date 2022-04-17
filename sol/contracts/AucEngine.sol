@@ -52,4 +52,21 @@ contract AucEngine {
         uint discount = cAuction.discauntRate * elapsed;
         return cAuction.startingPrice - discount;
     } 
+
+     function buy(uint index) external payable {
+        Auction memory cAuction = auctions[index];
+        require(!cAuction.stoped, "Stoped");
+        require(block.timestamp < cAuction.endsAt, "Already stoped");
+        uint cPrice = getPriceFor(index);
+        require(msg.value >= cPrice, "not enough");
+        cAuction.stoped = true;
+        cAuction.finalPrice = cPrice;
+        uint refund = msg.value - cPrice;
+            if(refund > 0) {
+                payable(msg.sender).transfer(refund);
+            }
+        cAuction.seller.transfer(
+            cPrice - ((cPrice * FEE) / 100)
+        );
+    }
 }
