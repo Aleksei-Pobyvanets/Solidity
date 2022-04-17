@@ -19,6 +19,7 @@ contract AucEngine {
     Auction[] public auctions;
 
     event AuctionCreated(uint index, string itemName, uint startingPrice, uint duration);
+    event AuctionEnded(uint index, uint finalPrice, address winner);
 
     constructor() {
         owner = msg.sender;
@@ -53,7 +54,7 @@ contract AucEngine {
         return cAuction.startingPrice - discount;
     } 
 
-     function buy(uint index) external payable {
+    function buy(uint index) external payable {
         Auction memory cAuction = auctions[index];
         require(!cAuction.stoped, "Stoped");
         require(block.timestamp < cAuction.endsAt, "Already stoped");
@@ -68,5 +69,7 @@ contract AucEngine {
         cAuction.seller.transfer(
             cPrice - ((cPrice * FEE) / 100)
         );
+
+            emit AuctionEnded(index, cPrice, msg.sender);
     }
 }
