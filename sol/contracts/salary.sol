@@ -15,6 +15,8 @@ contract paySalary {
         uint absentDAys;
         uint medicDays;
         uint payadSalaryAt;
+        uint toPaySal;
+        bool done;
     }
 
     Sal[] public sals;
@@ -32,16 +34,27 @@ contract paySalary {
         require(_salForHour > 0, "Invalid salary");
         require(_workedHours > 0, "Invalid worked hours");
 
+        
+
         Sal memory newWorkerSal = Sal({
             worker: _worker,
             salForHour: _salForHour,
             workedHours: _workedHours,
             absentDAys: _absentDAys,
             medicDays: _medicDays,
-            payadSalaryAt: block.timestamp
+            payadSalaryAt: block.timestamp,
+            toPaySal: _workedHours * _salForHour,
+            done: false
         });
-        
+
         sals.push(newWorkerSal);
-        
+    }
+
+    
+
+    function checkWorkers() public view returns(uint){
+        for(uint i = 0;i < sals.length; i++){
+            return sals.length;
+        }
     }
 }
