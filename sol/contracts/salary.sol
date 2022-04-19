@@ -8,6 +8,8 @@ contract paySalary {
     // uint salForMidForHour = 2 ether;
     // uint salForSinForHour = 3 ether;
 
+    // 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2
+
     struct Sal {
         string workerName;
         address payable worker;
@@ -34,16 +36,21 @@ contract paySalary {
     function createWorkersSal(string memory _workerName, uint _salForHour, address payable _worker, uint _workedHours, uint _absentDAys, uint _medicDays) external onlyOwner{
         require(_salForHour > 0, "Invalid salary");
         require(_workedHours > 0, "Invalid worked hours");
+        
+
+        uint absDays = _absentDAys;
+        uint medDays = _medicDays > 32 ? _medicDays - 32 + _absentDAys: _medicDays;
 
         
+
 
         Sal memory newWorkerSal = Sal({
             workerName: _workerName,
             worker: _worker,
             salForHour: _salForHour,
             workedHours: _workedHours,
-            absentDAys: _absentDAys,
-            medicDays: _medicDays,
+            absentDAys: absDays,
+            medicDays: medDays,
             payadSalaryAt: block.timestamp,
             toPaySal: _workedHours * _salForHour,
             done: false
@@ -51,7 +58,7 @@ contract paySalary {
 
         sals.push(newWorkerSal);
     }
-    
+
 
     function checkWorkers() public view returns(uint){
         for(uint i = 0;i < sals.length; i++){
