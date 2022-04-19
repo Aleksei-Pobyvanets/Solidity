@@ -19,6 +19,7 @@ contract paySalary {
         uint medicDays;
         uint payadSalaryAt;
         uint toPaySal;
+        uint allAbsDay;
         bool done;
     }
 
@@ -38,10 +39,8 @@ contract paySalary {
         require(_workedHours > 0, "Invalid worked hours");
         
 
-        uint absDays = _absentDAys;
-        uint medDays = _medicDays > 32 ? _medicDays - 32 + _absentDAys: _medicDays;
+        uint medDays = _medicDays > 32 ? _medicDays - 32: _medicDays;
 
-        
 
 
         Sal memory newWorkerSal = Sal({
@@ -49,14 +48,28 @@ contract paySalary {
             worker: _worker,
             salForHour: _salForHour,
             workedHours: _workedHours,
-            absentDAys: absDays,
+            absentDAys: calcAbs(_absentDAys, _medicDays, medDays),
             medicDays: medDays,
             payadSalaryAt: block.timestamp,
             toPaySal: _workedHours * _salForHour,
+            allAbsDay: allAbsDaysFunc(_absentDAys, _medicDays),
             done: false
         });
 
         sals.push(newWorkerSal);
+    }
+
+    function calcAbs(uint _absentDAys, uint _medicDays, uint medDays) public returns(uint){
+        if(_medicDays > 32){
+            uint absDays = _absentDAys + medDays;
+            return absDays;
+        }
+        return _absentDAys;
+    }
+
+    function allAbsDaysFunc(uint _absentDAys, uint _medicDays) public returns(uint){
+        uint allAbsDays = _absentDAys + _medicDays;
+        return allAbsDays;
     }
 
 
