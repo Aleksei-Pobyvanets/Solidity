@@ -51,7 +51,7 @@ contract paySalary {
             absentDAys: calcAbs(_absentDAys, _medicDays, medDays),
             medicDays: medDays,
             payadSalaryAt: block.timestamp,
-            toPaySal: _workedHours * _salForHour,
+            toPaySal: calcTotalToPay(_workedHours, _salForHour, _absentDAys, medDays, _medicDays),
             allAbsDay: allAbsDaysFunc(_absentDAys, _medicDays),
             done: false
         });
@@ -67,18 +67,27 @@ contract paySalary {
         return _absentDAys;
     }
 
+    function calcTotalToPay(uint _workedHours, uint _salForHour, uint _absentDAys, uint medDays, uint _medicDays) public returns(uint){
+        uint perem = calcAbs(_absentDAys, _medicDays, medDays);
+        uint total = _salForHour * _workedHours;
+        if(perem > 20){
+            total = _salForHour * (_workedHours - (perem - 20));
+            // require(total <= 0, "error");
+            return total;
+        } else {
+            return total;
+        }
+    }
+
     function allAbsDaysFunc(uint _absentDAys, uint _medicDays) public returns(uint){
         uint allAbsDays = _absentDAys + _medicDays;
         return allAbsDays;
     }
-
 
     function checkWorkers() public view returns(uint){
         for(uint i = 0;i < sals.length; i++){
             return sals.length;
         }
     }
-
-    
 
 }
