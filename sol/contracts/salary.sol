@@ -4,11 +4,6 @@ pragma solidity ^0.8.0;
 contract paySalary {
 
     address owner = msg.sender;
-    // uint salForJunForHour = 1 ether;
-    // uint salForMidForHour = 2 ether;
-    // uint salForSinForHour = 3 ether;
-
-    // 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2
 
     struct Sal {
         string workerName;
@@ -44,6 +39,9 @@ contract paySalary {
 
         uint medDays = _medicDays > 32 ? _medicDays - 32: _medicDays;
 
+        uint salInEth = 0 ether;
+        salInEth = _salForHour;
+
         // uint totPay = calcTotalToPay(_workedHours, _salForHour, _absentDAys, medDays, _medicDays);
         // uint totAbs = calcAbs(_absentDAys, _medicDays, medDays);
         // uint totAbsDays = allAbsDaysFunc(_absentDAys, _medicDays);
@@ -51,12 +49,12 @@ contract paySalary {
         Sal memory newWorkerSal = Sal({
             workerName: _workerName,
             worker: _worker,
-            salForHour: _salForHour,
+            salForHour: salInEth,
             workedHours: _workedHours,
             absentDAys: calcAbs(_absentDAys, _medicDays, medDays),
             medicDays: medDays,
             payadSalaryAt: block.timestamp,
-            toPaySal: calcTotalToPay(_workedHours, _salForHour, _absentDAys, medDays, _medicDays),
+            toPaySal: calcTotalToPay(_workedHours, salInEth, _absentDAys, medDays, _medicDays),
             allAbsDay: allAbsDaysFunc(_absentDAys, _medicDays),
             done: false
         });
@@ -65,10 +63,10 @@ contract paySalary {
 
         // emit WorkerCreated(sals.length - 1, _worker, , duration); 
 
-        pay(_worker, calcTotalToPay(_workedHours, _salForHour, _absentDAys, medDays, _medicDays));
+        // pay(_worker, calcTotalToPay(_workedHours, _salForHour, _absentDAys, medDays, _medicDays));
     }
 
-    function calcAbs(uint _absentDAys, uint _medicDays, uint medDays) private returns(uint){
+    function calcAbs(uint _absentDAys, uint _medicDays, uint medDays) public returns(uint){
         if(_medicDays > 32){
             uint absDays = _absentDAys + medDays;
             return absDays;
@@ -76,32 +74,46 @@ contract paySalary {
         return _absentDAys;
     }
 
-    function calcTotalToPay(uint _workedHours, uint _salForHour, uint _absentDAys, uint medDays, uint _medicDays) private returns(uint){
+    function calcTotalToPay(uint _workedHours, uint salInEth, uint _absentDAys, uint medDays, uint _medicDays) public returns(uint){
         uint perem = calcAbs(_absentDAys, _medicDays, medDays);
-        uint total = _salForHour * _workedHours;
+        uint total = 0 ether;
+        total = salInEth * _workedHours;
         if(perem > 20){
-            total = _salForHour * (_workedHours - (perem - 20));
+            total = salInEth * (_workedHours - (perem - 20));
             return total;
         } else {
             return total;
         }
     }
 
-    function allAbsDaysFunc(uint _absentDAys, uint _medicDays) private returns(uint){
+    function allAbsDaysFunc(uint _absentDAys, uint _medicDays) public returns(uint){
         uint allAbsDays = _absentDAys + _medicDays;
         return allAbsDays;
     }
 
 
-    function checkWorkers() private view returns(uint){
+    function checkWorkers() public view returns(uint){
         for(uint i = 0;i < sals.length; i++){
             return sals.length;
         }
     }
 
-    function pay(address payable worker, uint toPaySal) public payable{
-        worker.transfer(toPaySal);
+    function paySal(uint index) public payable onlyOwner{
+        address payable takenAdd;
+        uint takenSal;
+        for(uint i = 0; i < sals.length; i++){
+            takenAdd = sals[index].worker;
+            takenSal = sals[index].toPaySal;
+        }
+
+        takenAdd.transfer(takenSal);
     }
+
+    // 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db -- 1
+    // 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2 -- 2/1
+    // 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db -- 3/2
+
+
 
     function takeEther() public payable {
     }
