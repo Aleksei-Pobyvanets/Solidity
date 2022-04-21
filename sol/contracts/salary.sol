@@ -42,9 +42,6 @@ contract paySalary {
         uint salInEth = 0 ether;
         salInEth = _salForHour;
 
-        // uint totPay = calcTotalToPay(_workedHours, _salForHour, _absentDAys, medDays, _medicDays);
-        // uint totAbs = calcAbs(_absentDAys, _medicDays, medDays);
-        // uint totAbsDays = allAbsDaysFunc(_absentDAys, _medicDays);
 
         Sal memory newWorkerSal = Sal({
             workerName: _workerName,
